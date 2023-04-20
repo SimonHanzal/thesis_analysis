@@ -1,0 +1,221 @@
+
+%% Add-ons
+clear all
+
+% EEG processing packages
+fieldtrip_path = 'C:\Users\simonha\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\FieldTrip';
+% channel locations
+chanloc_path = 'C:\Users\simonha\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\EEGLAB\plugins\dipfit4.3\standard_BEM\elec\standard_1005.elc';
+% Viridis
+viridis_path = ('C:\Users\simonha\AppData\Roaming\MathWorks\MATLAB Add-Ons\Collections\cbrewer _ colorbrewer schemes for Matlab\cbrewer\cbrewer');
+
+% adding to path
+addpath(fieldtrip_path, viridis_path)
+
+%% Loading in
+directory = 'C:\Users\simonha\OneDrive - University of Glasgow\research\data\'
+analysed_directory = strcat(directory, 'exp1_data\permutation'); 
+
+% Path settings, do not touch!
+restoredefaultpath; savepath;
+addpath(fieldtrip_path);
+ft_defaults;
+addpath(analysed_directory)
+cd(analysed_directory)
+
+%% Settings
+compile = '_e_first'; % _e, _m | _first, _last, _all | _go, _nogo, nogo_correct, go_correct 
+
+load(char([strcat('10000',compile,'.mat')]))
+
+age_extraction = 0;
+end_group = 19;
+foi_contrast = [4 40];
+groups_to_compare = 1; %0 for between
+cluster_name = '_e_prestimulus';
+permute_times = 200;
+
+
+%% Compiling
+
+participant_list = {'10000', '10001','10002','10003', '10005','10007','10008','10009','10010',...
+                   '10501','10503','10504','10505','10506','10507','10508','10509','10510',...
+                   '15000','15001','15002','15003','15005','15006','15007','15008','15009',...
+                   '15501','15502','15504','15505','15506','15507','15510'};
+
+baseline_correct = 0; %0 for no, 1 for yes
+baseline_start = -1.2;
+baseline_end = -.7;
+baseline_type = 'relative';
+
+subtracted_dataset = 0; %or name of dataset
+subtracted_dataset_name = 'last';
+
+decibels = 1; %0 not to transform
+
+participants  = length(participant_list);
+channel_list = [1:32 33:64]%64
+channel_no = length(channel_list);
+dimord_setting = 'chan_freq_time';
+extract_power_start = 13;%7;
+extract_power_end = 115;%115;
+extract_time_start = 21;
+extract_time_end = 75;
+frequencies = extract_power_end - extract_power_start + 1;
+timepoints = extract_time_end - extract_time_start + 1;
+compilation = zeros(participants, channel_no, frequencies, timepoints);
+
+i = 1
+for i = 1:length(participant_list)
+    i
+    load(char(strcat(participant_list(i), compile, '.mat')))
+    data.dimord = dimord_setting;
+    if baseline_correct == 1
+        cfg = [];
+        cfg.baseline = [baseline_start baseline_end];
+        cfg.baselinetype = baseline_type;
+        data = ft_freqbaseline(cfg, data);
+    end
+    dataset1 = data.powspctrm(channel_list,extract_power_start:extract_power_end,extract_time_start:extract_time_end);
+    if subtracted_dataset == 0
+    else
+        load(char(strcat(participant_list(i), subtracted_dataset_name, '.mat')))
+        data.dimord = dimord_setting;
+        if baseline_correct == 1
+            cfg = [];
+            cfg.baseline = [baseline_start baseline_end];
+            cfg.baselinetype = baseline_type;
+            data = ft_freqbaseline(cfg, data);
+        end
+        dataset2 = data.powspctrm(channel_list,extract_power_start:extract_power_end,extract_time_start:extract_time_end);
+    end
+    if subtracted_dataset == 0
+        if decibels == 0
+            compilation(i,:,:,:) = dataset1;
+        else
+            compilation(i,:,:,:) = db(dataset1);
+        end
+    else
+        if decibels == 0
+            compilation(i,:,:,:) = dataset1 - dataset2;
+        else
+            compilation(i,:,:,:) = db(dataset1) - db(dataset2);
+        end
+    end
+end
+
+%save([strcat('compiled_', compile),'.mat'], 'compilation', '-v7.3')
+
+%% Group generation
+
+% First group for permutation
+group1 = data;
+group1.time = group1.time(extract_time_start:extract_time_end);
+group1.freq = group1.freq(extract_power_start:extract_power_end);
+if age_extraction == 1
+    group1.powspctrm = compilation(1:end_group-1,:,:,:);
+    group1.dimord = 'subj_chan_freq_time';
+else
+    group1.powspctrm = compilation;
+    group1.dimord = 'subj_chan_freq_time';
+end
+group1_change = data;
+if age_extraction == 1
+    group1_change.powspctrm = squeeze(nanmean(compilation(1:end_group-1,:,:,:),1));
+else
+    group1_change.powspctrm = squeeze(nanmean(compilation(:,:,:,:),1));
+end
+group1_change.dimord = 'chan_freq_time';
+
+% Second group for permutation
+group2 = data;
+group2.time = group2.time(extract_time_start:extract_time_end);
+group2.freq = group2.freq(extract_power_start:extract_power_end);
+if age_extraction == 1
+    group2.powspctrm = compilation(end_group:length(participant_list),:,:,:);
+    group2.dimord = 'subj_chan_freq_time';
+else
+    group2.powspctrm = compilation;
+    group2.dimord = 'subj_chan_freq_time';
+end
+group2_change = data;
+if age_extraction == 1
+    group2_change.powspctrm = squeeze(nanmean(compilation(end_group:length(participant_list),:,:,:),1));
+else
+    group2_change.powspctrm = squeeze(nanmean(compilation(:,:,:,:),1));
+end
+group2_change.dimord = 'chan_freq_time';
+
+% Group difference calculation
+group_change = data;
+group_change.dimord = 'chan_freq_time';
+group_change.time = group_change.time(extract_time_start:extract_time_end);
+group_change.freq = group_change.freq(extract_power_start:extract_power_end);
+group_change.powspctrm = group2_change.powspctrm - group1_change.powspctrm;
+
+% Load neighbours
+cd('C:\Users\simonha\OneDrive - University of Glasgow\research\analysis\archive\learning_clusters\tutorial2');
+load('easycap64ch-avg_neighb.mat', 'neighbours');
+cd(analysed_directory)
+cfg = [];
+cfg.output = 'pow';
+cfg.channel = {'EEG', '-EOG', '-ECG'};
+cfg.avgovergchan = 'no';
+cfg.frequency = foi_contrast;
+cfg.avgovergfreq = 'yes';
+cfg.parameter = 'powspctrm';
+cfg.correctm = 'cluster'
+cfg.clusteralpha = 0.05;                        
+cfg.clusterthreshold = 'nonparametric_common';
+cfg.minnbchan = 2;                           
+cfg.tail = 0;                           
+cfg.clustertail = cfg.tail;
+cfg.alpha = 0.05;                        
+cfg.correcttail = 'alpha';                     
+cfg.computeprob = 'yes';
+cfg.numrandomization = permute_times;                         
+cfg.neighbours = neighbours;
+cfg.method = 'distance';
+cfg.neighbours = ft_prepare_neighbours(cfg, data);
+cfg.method = 'ft_statistics_montecarlo';
+cfg.ivar = 1;
+
+if groups_to_compare == 0 %between
+    cfg.statistic = 'ft_statfun_indepsamplesT';
+    cfg.clusterstatistic = 'maxsum';
+    size1 = size(group1.powspctrm,1);
+    size2 = size(group2.powspctrm,1);
+    design = zeros(1,size1 + size2); 
+    design(1,1:size1) = 1;
+    design(1,size1+1:(size1+size2)) = 2;
+    design(2,:) = [1:34];   
+elseif groups_to_compare == 1 %within
+    cfg.statistic = 'ft_statfun_depsamplesT';
+    cfg.clusterstatistic = 'maxsize';
+    size1 = size(group1.powspctrm,1);
+    size2 = size(group2.powspctrm,1);
+    design = zeros(1, size1 + size2); %second here
+    design(1,1:size1) = 1;
+    design(1,(size1+1):(size1 + size2)) = 2; %second here
+    design(2,:) = [1:length(participant_list) 1:length(participant_list)];
+    cfg.uvar = 1;
+end
+
+cfg.design = design;
+
+test = ft_freqstatistics(cfg, group1, group2);
+
+save(strcat('describe',cluster_name,'.mat'), 'group_change', '-v7.3')
+save(strcat('test',cluster_name,'.mat'), 'test', '-v7.3')
+
+%% Cluster-specific plotting
+
+cfg = [];
+
+cfg.alpha  = 0.05;
+
+cfg.zparam = 'stat';
+
+cfg.zlim   = [-4 4];
+
+ft_clusterplot(cfg, test);
