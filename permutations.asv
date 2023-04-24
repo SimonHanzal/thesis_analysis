@@ -24,15 +24,15 @@ addpath(analysed_directory)
 cd(analysed_directory)
 
 %% Settings
-dataset_to_load = '_e_nogo_correct'; % _e, _m | _first, _last, _all | _go, _nogo, nogo_correct, go_correct 
+dataset_to_load = '_e_last'; % _e, _m | _first, _last, _all | _go, _nogo, nogo_correct, go_correct 
 
 load(char([strcat('10000',dataset_to_load,'.mat')]))
 
-age_extraction = 1;
+age_extraction = 0;
 end_group = 19;
 foi_contrast = [4 40];
 groups_to_compare = 1; %0 for between, 1 for within
-compile = 'beta_changes';
+compile = 'vas_task';
 permute_times = 50;
 
 
@@ -48,8 +48,8 @@ baseline_start = -1.2;
 baseline_end = -.7;
 baseline_type = 'relative';
 
-subtracted_dataset = 0; %or name of dataset
-subtracted_dataset_name = '_e_first';
+subtracted_dataset = 1; %or name of dataset
+subtracted_dataset_name = 'first';
 
 decibels = 1; %0 not to transform
 
@@ -59,8 +59,8 @@ channel_no = length(channel_list);
 dimord_setting = 'chan_freq_time';
 extract_power_start = 13;
 extract_power_end = 115;%115;
-extract_time_start = 1; %21
-extract_time_end = 201; %75
+extract_time_start = 21; %21
+extract_time_end = 75; %75
 frequencies = extract_power_end - extract_power_start + 1;
 timepoints = extract_time_end - extract_time_start + 1;
 compilation = zeros(participants, channel_no, frequencies, timepoints);

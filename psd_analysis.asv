@@ -32,5 +32,4 @@ xline(0)
 [clusters, p_values, t_sums, permutation_distribution] = permutest(curve_young(9:194), curve_older(9:194), false, 0.05, 10000, true);
 
 % Permutest only in the important segment
-[clusters, p_values, t_sums, permutation_distribution] = permutest(curve_young(116:141), curve_older(116:141), false, 0.05, 10000, true);
-% Very distinguishable
+[clusters, p_values, t_sums, permutation_distribution] = permutest(curve_young(9:194), curve_older(9:194), false, 0.05, 10000, true);

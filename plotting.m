@@ -15,8 +15,8 @@ viridis_path = ('C:\Users\simonha\AppData\Roaming\MathWorks\MATLAB Add-Ons\Colle
 addpath(eeglab_path, fieldtrip_path, viridis_path)
 
 %% Loading in
-directory = 'C:\Users\simonha\OneDrive - University of Glasgow\research\data\'
-analysed_directory = strcat(directory, 'exp1_data\permutation'); 
+directory = 'C:\Users\simonha\OneDrive - University of Glasgow\research\analysis\thesis_analysis'
+analysed_directory = strcat(directory, '\clusters'); 
 
 % Path settings, do not touch!
 restoredefaultpath; savepath;
@@ -25,17 +25,17 @@ ft_defaults;
 addpath(analysed_directory)
 cd(analysed_directory)
 
-test_name = '_e_prestimulus';
-load(strcat('describe', test_name, '.mat'))
-load(strcat('test', test_name, '.mat'))
+test_name = 'task_change';
+load(strcat(test_name, '.mat'))
+load(strcat(test_name, '_test.mat'))
 
 %% Spectrogram
 
 % Style
 addpath(viridis_path)
 load('channel_locations.mat')
-[cMap] = viridis(512);
-cMap = flipud(cMap);
+cMap = inferno(512);
+%cMap = flipud(cMap);
 %load(strcat(cluster_name,'.mat'))
 
 freq_interp = linspace(5, 40, 512);
@@ -45,15 +45,15 @@ freq_interp = linspace(5, 40, 512);
 %channel_plot = {'O1', 'O2', 'PO7', 'PO8', 'POz'}; %occipital
 
 channels = [1:30 33:64];
-plot_test = 1;
+plot_test = 0;
 baseline_correct = 0;
-mask_plot = 1;
+mask_plot = 0;
 
 cfg = [];
 cfg.channel = channels;
 %cfg.avgoverrpt = 'yes';
 %cfg.parameter = {'powspctrm','powspctrm_b'};
-plot_data = ft_selectdata(cfg, group_change); %group1, group2
+plot_data = ft_selectdata(cfg, group1); %group1, group2, group_change
 
 if plot_test == 1
     plot_data.powspctrm = test.stat;
@@ -74,13 +74,13 @@ if mask_plot == 1
     
     cfg.maskstyle = 'opacity';
     cfg.masknans = 'yes';
-    cfg.maskalpha = 0.2;
+    cfg.maskalpha = 0.18;
 end
 
 cfg.colormap = cMap;
-%cfg.xlim = [-1.75, 1.75];
-%cfg.ylim = [4, 40];%'maxmin';
-%cfg.zlim = [-3 3];% [0, 5] 'minzero'
+%cfg.xlim = [-1.25, 1.25];
+cfg.ylim = [4, 40];%'maxmin';
+%cfg.zlim = [-2.5 2.5];% [0, 5] 'minzero'
 cfg.title = ' ';
 cfg.layout = 'acticap-64ch-standard2.mat'
 cfg.figure = 'gcf';
@@ -99,18 +99,26 @@ hold on
 ft_singleplotTFR(cfg, plot_data);
 hold on
 ft_singleplotTFR(cfg, plot_data);
+hold on
+xline(0);
 
 % Extracting significant electrodes
 plot_data.sig_electrodes = squeeze(nanmean(squeeze(nanmean(double(test.posclusterslabelmat),3)),2)) > 0;
+%27,28
+top_electrodes = squeeze(nanmean(squeeze(nanmean(group_change.powspctrm(:, 7:19, 16:41),3)),2));
+%31,32 (careful about EOG)
+top_electrodes = squeeze(nanmean(squeeze(nanmean(test.stat(:, 25:55, 101:126),3)),2));
+
+[a b] = min(top_electrodes);
 
 %% Topography
 
 cfg = [];
 %cfg.elec = go_dif_db.elec;
 cfg.channel = {'EEG', '-EOG', '-ECG'};
-cfg.xlim = [-1 -0.2];        
+cfg.xlim = [-0.8 -0.3];        
 cfg.ylim = [8 12];
-%cfg.zlim = [-3 3];
+cfg.zlim = [0 3];
 cfg.title = '';
 cfg.colormap = cMap;
 cfg.colorbar = 'yes';
@@ -119,9 +127,12 @@ cfg.figure = 'gcf';
 cfg.layout = 'acticap-64ch-standard2.mat';
 %cfg.channel = 'sig_electrodes';  % use the thresholded probability to mask the data
 %cfg.maskstyle = 'box';
+cfg.style = 'straight';
 cfg.parameter = 'powspctrm';
 %cfg.comment = 'no';
 cfg.colorbartext = 't-value';
+cfg.marker = 'off';
+cfg.outlien = 'off';
 %cfg.maskfacealpha = 0.05; %0.5
 
 ft_topoplotTFR(cfg, plot_data);
