@@ -19,18 +19,24 @@ participant_list = {'10000', '10001','10002','10003', '10005','10007','10008','1
                    '10501','10503','10504','10505','10506','10507','10508','10509','10510',...
                    '15000','15001','15002','15003','15005','15006','15007','15008','15009',...
                    '15501','15502','15504','15505','15506','15507','15510'};
-    
+
+participant_list_new = {'10000', '10001','10002','10003', '10004', '10005','10006', '10007','10008','10009','10010',...
+   '10501','10502', '10503','10504','10505','10506','10507','10508','10509','10510',...
+   '15000','15001','15002','15003',
+   
+   %15003 and 15008 throwing a weird error
+participant_list_modify = {'15509' ,'15510'};
 
 
-type_logic = 5; %nogo 1, go 2, all 3, first 4, last 5
-sets = '_e';
-lower_limit = -2;
-upper_limit = 2;
-saving = 0;
-loop_all = 0;
+type_logic = 3; %nogo 1, go 2, all 3, first 4, last 5
+sets = '_ms';
+lower_limit = -1.5;
+upper_limit = 1.5;
+saving = 1;
+loop_all = 1;
 
 if loop_all == 1
-    loop_lenth = length(participant_list)
+    loop_length = length(participant_list)
 else
     loop_length = 2
 end
@@ -47,17 +53,22 @@ cd(analysed_directory);
 
 % Load data
 [ALLEEG EEG CURRENTSET ALLCOM]  = eeglab;
-
+parts = table2array(readtable('parts.csv','PreserveVariableNames',true));
+exclude = table2array(readtable('trials.csv','PreserveVariableNames',true));
 %% Frequency analysis
 i = 1;
-for i = 1:loop_length
-
+for i = 1:2
     % Load
-    participant = char(participant_list(i));
+    
+    participant = participant_list_modify(i);
     recording = strcat(participant, sets, '.set');
     EEG = pop_loadset('filename',recording,'filepath',analysed_directory);
     EEG = eeg_checkset(EEG);
+    remove = str2num(cell2mat(exclude(37+i)));
+    EEG = pop_selectevent( EEG, 'omitevent',remove ,'deleteevents','off','deleteepochs','on','invertepochs','off');
     eeglab redraw;
+    
+    
     
     % Settings
     cfg = [];
@@ -78,8 +89,8 @@ for i = 1:loop_length
         EEG = pop_epoch(EEG, {'S  0' 'S  1' 'S  2' 'S  4' 'S  5' 'S  7' 'S  8' 'S  9'}, [lower_limit  upper_limit], 'epochinfo', 'yes');
     elseif type_logic == 3
         type = 'all';
-        cfg.trialdef.eventvalue = {'S  0' 'S  1' 'S  2' 'S  3' 'S  4' 'S  5' 'S  6' 'S  7' 'S  8' 'S  9'};
-        EEG = pop_epoch(EEG, {'S  0' 'S  1' 'S  2' 'S  3' 'S  4' 'S  5' 'S  6' 'S  7' 'S  8' 'S  9'}, [lower_limit  upper_limit], 'epochinfo', 'yes');
+        cfg.trialdef.eventvalue = {'S  10' 'S  0' 'S  1' 'S  2' 'S  3' 'S  4' 'S  5' 'S  6' 'S  7' 'S  8' 'S  9'};
+        EEG = pop_epoch(EEG, {'S  0' 'S  1' 'S  2' 'S  3' 'S  4' 'S  5' 'S  6' 'S  7' 'S  8' 'S  9' 'S 10'}, [lower_limit  upper_limit], 'epochinfo', 'yes');
     elseif type_logic == 4
         type = 'first';
         %cfg.?
@@ -102,7 +113,7 @@ for i = 1:loop_length
     cfg.taper = 'hanning';
     cfg.foi = 2:1/3:40;            
     cfg.t_ftimwin = 6./cfg.foi;         
-    cfg.toi = -2:0.02:1;      
+    cfg.toi = -1.5:0.02:1.5;      
     cfg.keeptrials = 'yes';
     cfg.pad = 'maxperlen';        
     cfg.polyremoval = 1;             

@@ -1,6 +1,13 @@
-function [group_change, test] = get_group_change(group1, group2, participant_list, baseline_correct, start_time, end_time, age_extraction, end_group, is_second, change_name,...
-    groups_to_compare, permute_times, compile, analysed_directory, project_directory, shorten)
-    if is_second == 1
+function [group_change, test] = get_group_change(project_directory, analysed_directory, group1, group2, subtracted_name, participant_list, baseline_correct, start_time, end_time, split, second_group_position, ...
+    groups_to_compare, permute_times, shorten, change_name)
+    
+    compile = strcat(change_name, '_test')
+    if isequal(subtracted_name,0)
+        subtracted = 0
+    else
+        subtracted = 1
+    end
+    if split == 1
         group_1_is_second = 0;
         group_2_is_second = 1;
     else
@@ -14,9 +21,9 @@ function [group_change, test] = get_group_change(group1, group2, participant_lis
         end_time_1 = end_time;
         end_time_2 = end_time;
     end
-    [group_1, group_1_change] = get_group(group1, participant_list, baseline_correct, start_time, end_time_1, age_extraction, end_group, group_1_is_second, group1, change_name, shorten);
-    [group_2, group_2_change] = get_group(group2, participant_list, baseline_correct, start_time, end_time_2, age_extraction, end_group, group_2_is_second, group2, change_name, shorten);
-    
+    cd(project_directory)
+    [group_1, group_1_change] = get_group(project_directory, analysed_directory, group1, subtracted_name, participant_list, baseline_correct, start_time, end_time_1, split, second_group_position, group_1_is_second, group1, shorten, subtracted, change_name);
+    [group_2, group_2_change] = get_group(project_directory, analysed_directory, group2, subtracted_name, participant_list, baseline_correct, start_time, end_time_2, split, second_group_position, group_2_is_second, group2, shorten, subtracted, change_name);
     % Group difference calculation
     group_change = group_1;
     group_change.dimord = 'chan_freq_time';
@@ -78,5 +85,5 @@ function [group_change, test] = get_group_change(group1, group2, participant_lis
 
     test = ft_freqstatistics(cfg, group_1, group_2);
     cd(project_directory)
-    save(strcat('clusters/', compile,'.mat'), 'test', '-v7.3')     
+    save(strcat('clusters\', compile,'.mat'), 'test', '-v7.3')     
 end

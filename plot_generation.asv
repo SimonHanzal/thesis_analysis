@@ -106,7 +106,7 @@ participant_list_demotivated = {'10000','10001','10003','10005','10007','10009',
 %second_group_position, groups_to_compare, permute_times, shorten,  change_name)
 
 % Setting test strength
-x = 3000;
+x = 10;
 
 %% TOT uncorrected
 [group_change, test] = get_group_change(...
@@ -124,7 +124,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_uncorrected') % change_name
+    'test') % change_name
 
 %% TOT uncorrected reversed
 [group_change, test] = get_group_change(...
@@ -142,7 +142,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_uncorrected_reversed') % change_name
+    'test') % change_name
 
 %% TOT uncorrected older 4+6
 [group_change, test] = get_group_change(...
@@ -160,7 +160,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_uncorrected_older') % change_name
+    'test') % change_name
 
 %% TOT uncorrected older 4+6 reversed
 [group_change, test] = get_group_change(...
@@ -178,7 +178,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_uncorrected_older_reversed') % change_name
+    'test') % change_name
 
 %% TOT uncorrected young 4+6
 [group_change, test] = get_group_change(...
@@ -196,7 +196,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_uncorrected_young') % change_name
+    'test') % change_name
 
 %% TOT uncorrected young 4+6 reversed
 [group_change, test] = get_group_change(...
@@ -214,7 +214,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_uncorrected_young_reversed') % change_name
+    'test') % change_name
 
 %% 8 Between motivation young
 [group_change, test] = get_group_change(...
@@ -232,7 +232,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'betwee_motivation_young') % change_name
+    'test') % change_name
 
 %% 8 Between motivation older
 [group_change, test] = get_group_change(...
@@ -250,7 +250,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'between_motivation_older') % change_name
+    'test') % change_name
 
 %% 9 + 12 tot
 [group_change, test] = get_group_change(...
@@ -268,7 +268,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot') % change_name
+    'test') % change_name
 
 %% 9 + 12 tot reversed
 [group_change, test] = get_group_change(...
@@ -286,7 +286,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_reversed') % change_name
+    'test') % change_name
 
 %% 10 tot older
 [group_change, test] = get_group_change(...
@@ -304,7 +304,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_older') % change_name
+    'test') % change_name
 
 %% 10 tot older reversed
 [group_change, test] = get_group_change(...
@@ -322,7 +322,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_older_reversed') % change_name
+    'test') % change_name
 
 %% 11 tot young
 [group_change, test] = get_group_change(...
@@ -340,7 +340,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_young') % change_name
+    'test') % change_name
 
 %% 11 tot young reversed
 [group_change, test] = get_group_change(...
@@ -358,7 +358,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'tot_young_reversed') % change_name
+    'test') % change_name
 
 %% Age effects in trial types test nogo
 
@@ -377,7 +377,7 @@ x = 3000;
     0,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'nogo_test') % change_name
+    'test') % change_name
 
 % Somethign wrong with go trials, using e_go seems to work better. Can
 % check later.
@@ -399,7 +399,7 @@ x = 3000;
     0,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'go_test') % change_name
+    'test') % change_name
 
 
 %% Within motivation splitting test
@@ -419,9 +419,9 @@ x = 3000;
     0,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'within_motivation_test') % change_name
+    'test') % change_name
 
-%% Age differences
+%% 10
 [group_change, test] = get_group_change(...
     project_directory,... % project directory
     analysed_directory,... % analysed directory
@@ -437,4 +437,4 @@ x = 3000;
     0,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'age_differences') % change_name
+    'test') % change_name

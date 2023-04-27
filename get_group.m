@@ -1,11 +1,11 @@
-function [group, group_change] = get_group(group_to_load, participant_list, baseline_correct, start_time, end_time, age_extraction, end_group, is_second, name, change_name, shorten)
-
+function [group, group_change] = get_group(project_directory, analysed_directory, group_to_load, subtracted_name, participant_list, baseline_correct, start_time, end_time, split, second_group_position, is_second, name, shorten, subtracted, change_name)
+% is_second = if splitting, the second group gets different change 
+    cd(analysed_directory)
     baseline_start = -1.2;
     baseline_end = -.7;
     baseline_type = 'relative';
-    subtracted_dataset = 0; %or name of dataset
-    subtracted_dataset_name = 'last';
-    
+    subtracted_dataset = subtracted; %or name of dataset
+    subtracted_dataset_name = subtracted_name;
     decibels = 0; %0 not to transform
 
     participants  = length(participant_list);
@@ -26,13 +26,13 @@ function [group, group_change] = get_group(group_to_load, participant_list, base
     frequencies = extract_power_end - extract_power_start + 1;
     timepoints = extract_time_end - extract_time_start + 1 - extract_time_addition + extract_time_subtraction;
     compilation = zeros(participants, channel_no, frequencies, timepoints);
-
     i = 1;
     for i = 1:length(participant_list)
         i
         load(char(strcat(participant_list(i), group_to_load, '.mat')))
         data.dimord = dimord_setting;
         if baseline_correct == 1
+            decibels = 1; %0 not to transform
             cfg = [];
             cfg.baseline = [baseline_start baseline_end];
             cfg.baselinetype = baseline_type;
@@ -44,6 +44,7 @@ function [group, group_change] = get_group(group_to_load, participant_list, base
             load(char(strcat(participant_list(i), subtracted_dataset_name, '.mat')))
             data.dimord = dimord_setting;
             if baseline_correct == 1
+                decibels = 1; %0 not to transform
                 cfg = [];
                 cfg.baseline = [baseline_start baseline_end];
                 cfg.baselinetype = baseline_type;
@@ -68,11 +69,11 @@ function [group, group_change] = get_group(group_to_load, participant_list, base
     group = data;
     group.time = group.time(extract_time_start:extract_time_end);
     group.freq = group.freq(extract_power_start:extract_power_end);
-    if age_extraction == 1
+    if split == 1
         if is_second == 1
-            group.powspctrm = compilation(1:end_group-1,:,:,:);
+            group.powspctrm = compilation(1:second_group_position-1,:,:,:);
         else
-            group.powspctrm = compilation(end_group:length(participant_list),:,:,:);
+            group.powspctrm = compilation(second_group_position:length(participant_list),:,:,:);
         end
         group.dimord = 'subj_chan_freq_time';
     else
@@ -80,16 +81,17 @@ function [group, group_change] = get_group(group_to_load, participant_list, base
         group.dimord = 'subj_chan_freq_time';
     end
     group_change = data;
-    if age_extraction == 1
+    if split == 1
         if is_second == 1
-            group_change.powspctrm = squeeze(nanmean(compilation(end_group:length(participant_list),:,:,:),1));
+            group_change.powspctrm = squeeze(nanmean(compilation(second_group_position:length(participant_list),:,:,:),1));
         else
-            group_change.powspctrm = squeeze(nanmean(compilation(1:end_group-1,:,:,:),1));
+            group_change.powspctrm = squeeze(nanmean(compilation(1:second_group_position-1,:,:,:),1));
         end
 
     else
         group_change.powspctrm = squeeze(nanmean(compilation(:,:,:,:),1));
     end
     group_change.dimord = 'chan_freq_time';
+    cd(project_directory)
     save(strcat('clusters/', change_name, name,'.mat'), 'group', '-v7.3')
 end

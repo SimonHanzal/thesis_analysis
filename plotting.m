@@ -25,7 +25,7 @@ ft_defaults;
 addpath(analysed_directory)
 cd(analysed_directory)
 
-test_name = 'task_change';
+test_name = 'test';
 load(strcat(test_name, '.mat'))
 load(strcat(test_name, '_test.mat'))
 
@@ -53,7 +53,7 @@ cfg = [];
 cfg.channel = channels;
 %cfg.avgoverrpt = 'yes';
 %cfg.parameter = {'powspctrm','powspctrm_b'};
-plot_data = ft_selectdata(cfg, group1); %group1, group2, group_change
+plot_data = ft_selectdata(cfg, group_change); %group, group_change
 
 if plot_test == 1
     plot_data.powspctrm = test.stat;
