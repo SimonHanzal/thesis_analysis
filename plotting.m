@@ -25,7 +25,9 @@ ft_defaults;
 addpath(analysed_directory)
 cd(analysed_directory)
 
-test_name = 'test';
+test_name = 'within_demotivated_uncorrected_ms_all';
+test_name = 'tot_young_reversed';
+test_name = 'tot_older_reversed';
 load(strcat(test_name, '.mat'))
 load(strcat(test_name, '_test.mat'))
 
@@ -45,7 +47,7 @@ freq_interp = linspace(5, 40, 512);
 %channel_plot = {'O1', 'O2', 'PO7', 'PO8', 'POz'}; %occipital
 
 channels = [1:30 33:64];
-plot_test = 0;
+plot_test = 1;
 baseline_correct = 0;
 mask_plot = 0;
 
@@ -112,34 +114,105 @@ top_electrodes = squeeze(nanmean(squeeze(nanmean(test.stat(:, 25:55, 101:126),3)
 [a b] = min(top_electrodes);
 
 %% Topography
+test_name = 'tot_uncorrected_young_e_first';
+test_name = 'tot_uncorrected_young_e_last';
+test_name = 'tot_uncorrected_older_e_first';
+test_name = 'tot_uncorrected_older_e_last';
+test_name = 'betwee_motivation_young_ms_all';
+test_name = 'between_motivation_older_ms_all';
+test_name = 'tot';
+load(strcat(test_name, '.mat'))
+cfg = [];
+cfg.channel = channels;
+%cfg.avgoverrpt = 'yes';
+%cfg.parameter = {'powspctrm','powspctrm_b'};
+plot_data = ft_selectdata(cfg, group_change); %group, group_change
 
 cfg = [];
-%cfg.elec = go_dif_db.elec;
+cfg.layout = 'acticap-64ch-standard2.mat';
+cfg.mask = 'no';
+cfg.outline = 'circle';
+cfg.headshape = 'no';
+layout = ft_prepare_layout(cfg, plot_data);
+layout.outline = {};
+%layout.mask = {};
+
+cfg = [];
 cfg.channel = {'EEG', '-EOG', '-ECG'};
 cfg.xlim = [-0.8 -0.3];        
 cfg.ylim = [8 12];
 cfg.zlim = [0 3];
 cfg.title = '';
 cfg.colormap = cMap;
-cfg.colorbar = 'yes';
+cfg.colorbar = 'no';
 cfg.figure = 'gcf';
 %cfg.frequency = foi_contrast;
-cfg.layout = 'acticap-64ch-standard2.mat';
+%cfg.layout = 'acticap-64ch-standard2.mat';
 %cfg.channel = 'sig_electrodes';  % use the thresholded probability to mask the data
 %cfg.maskstyle = 'box';
 cfg.style = 'straight';
 cfg.parameter = 'powspctrm';
-%cfg.comment = 'no';
-cfg.colorbartext = 't-value';
+cfg.comment = 'no';
+%cfg.colorbartext = 't-value';
 cfg.marker = 'off';
-cfg.outlien = 'off';
+cfg.shading = 'interp';
+cfg.layout = layout;
 %cfg.maskfacealpha = 0.05; %0.5
-
+figure(1);
+set(gcf, 'color', 'white');
 ft_topoplotTFR(cfg, plot_data);
+saveas(1,"demotivated.png")
 
+
+
+ft_plot_layout(layout)
+
+%%
+
+cfg = [];
+cfg.channel = channels;
+%cfg.avgoverrpt = 'yes';
+%cfg.parameter = {'powspctrm','powspctrm_b'};
+plot_data = ft_selectdata(cfg, group_change); %group, group_change
+
+cfg = [];
+cfg.layout = 'acticap-64ch-standard2.mat';
+cfg.mask = 'no';
+cfg.outline = 'circle';
+cfg.headshape = 'no';
 layout = ft_prepare_layout(cfg, plot_data);
+layout.outline = {};
+%layout.mask = {};
 
-ft_plot_layout(layout, 'chanindx', plot_data.sig_electrodes)
+cfg = [];
+cfg.channel = {'EEG', '-EOG', '-ECG'};
+cfg.xlim = [0.5 1];        
+cfg.ylim = [14 24];
+cfg.zlim = [0 1];
+cfg.title = '';
+cfg.colormap = cMap;
+cfg.colorbar = 'no';
+cfg.figure = 'gcf';
+%cfg.frequency = foi_contrast;
+%cfg.layout = 'acticap-64ch-standard2.mat';
+%cfg.channel = 'sig_electrodes';  % use the thresholded probability to mask the data
+%cfg.maskstyle = 'box';
+cfg.style = 'straight';
+cfg.parameter = 'powspctrm';
+cfg.comment = 'no';
+%cfg.colorbartext = 't-value';
+cfg.marker = 'off';
+cfg.shading = 'interp';
+cfg.layout = layout;
+%cfg.maskfacealpha = 0.05; %0.5
+figure(1);
+set(gcf, 'color', 'white');
+ft_topoplotTFR(cfg, plot_data);
+saveas(1,"cluster_older.png")
+
+
+
+ft_plot_layout(layout)
 
 %% Macro-plotting elements
 

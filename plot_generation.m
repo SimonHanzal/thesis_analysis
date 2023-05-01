@@ -44,7 +44,16 @@ participant_list_motivation =  {'10000','10001','10003','10005','10007','10009',
                                '10002','10004','10006','10008','10010',... %5
                                '10504','10506','10508','10510',... %4
                                '15000','15002',... %2
-                               '15504','15506','15510'}; %3    
+                               '15504','15506','15510'}; %3
+                           
+participant_list_motivation_reversed = {'10002','10004','10006','10008','10010',... %5
+                               '10504','10506','10508','10510',... %4
+                               '15000','15002',... %2
+                               '15504','15506','15510',... %3 
+                                '10000','10001','10003','10005','10007','10009',... %6
+                               '10501','10503','10505','10507','10509',... %5
+                               '15001','15005','15007','15009',... %4
+                               '15501','15505','15507','15509'}%4; 
                
 participant_list_comparison =  {'10000','10001','10003','10005','10007','10009',... %6
                                '10501','10503','10505','10507','10509',... %5
@@ -69,6 +78,12 @@ participant_list_motivated_older = {'15000','15002',... %2
 participant_list_demotivated = {'10000','10001','10003','10005','10007','10009',... %6
                                '10501','10503','10505','10507','10509',... %5
                                '15001','15005','15007','15009',... %4
+                               '15501','15505','15507'}; %3
+
+participant_list_demotivated_young = {'10000','10001','10003','10005','10007','10009',... %6
+                               '10501','10503','10505','10507','10509'}; %3    
+                           
+participant_list_demotivated_older = {'15001','15005','15007','15009',... %4
                                '15501','15505','15507'}; %3    
 
 %% Function guide:
@@ -107,6 +122,25 @@ participant_list_demotivated = {'10000','10001','10003','10005','10007','10009',
 
 % Setting test strength
 x = 3000;
+
+%% Tests
+[group_change, test] = get_group_change(...
+    project_directory,... % project directory
+    analysed_directory,... % analysed directory
+    '_ms_all',... % group1
+    '_ms_all',... % group2
+    0,... % subtracted_name
+    participant_list_motivation,... % participant_list
+    0,...   % baseline_correct
+    21,... % start_time
+    75,... % end_time 
+    1,... % split
+    20,... % second_group_position
+    0,... % groups_to_compare
+    x,... % permute_times 
+    0,... % shorten
+    'within_motivation') % change_name
+
 
 %% TOT uncorrected
 [group_change, test] = get_group_change(...
@@ -223,7 +257,7 @@ x = 3000;
     '_ms_all',... % group1
     '_e_last',... % group2
     0,... % subtracted_name
-    participant_list_motivated_young,... % participant_list
+    participant_list_demotivated_young,... % participant_list
     0,...   % baseline_correct
     21,... % start_time
     75,... % end_time 
@@ -232,7 +266,7 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'betwee_motivation_young') % change_name
+    'between_demotivation_young') % change_name
 
 %% 8 Between motivation older
 [group_change, test] = get_group_change(...
@@ -241,7 +275,7 @@ x = 3000;
     '_ms_all',... % group1
     '_e_last',... % group2
     0,... % subtracted_name
-    participant_list_motivated_older,... % participant_list
+    participant_list_demotivated_older,... % participant_list
     0,...   % baseline_correct
     21,... % start_time
     75,... % end_time 
@@ -250,7 +284,43 @@ x = 3000;
     1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'between_motivation_older') % change_name
+    'between_demotivation_older') % change_name
+
+%% 8 Between motivation corrected young
+[group_change, test] = get_group_change(...
+    project_directory,... % project directory
+    analysed_directory,... % analysed directory
+    '_ms_all',... % group1
+    '_e_last',... % group2
+    0,... % subtracted_name
+    participant_list_demotivated_young,... % participant_list
+    1,...   % baseline_correct
+    1,... % start_time
+    151,... % end_time 
+    0,... % split
+    19,... % second_group_position
+    1,... % groups_to_compare
+    x,... % permute_times 
+    0,... % shorten
+    'between_demotivation_corrected_young') % change_name
+
+%% 8 Between motivation corrected older
+[group_change, test] = get_group_change(...
+    project_directory,... % project directory
+    analysed_directory,... % analysed directory
+    '_ms_all',... % group1
+    '_e_last',... % group2
+    0,... % subtracted_name
+    participant_list_demotivated_older,... % participant_list
+    1,...   % baseline_correct
+    1,... % start_time
+    151,... % end_time 
+    0,... % split
+    19,... % second_group_position
+    1,... % groups_to_compare
+    x,... % permute_times 
+    0,... % shorten
+    'between_demotivation_corrected_older') % change_name
 
 %% 9 + 12 tot
 [group_change, test] = get_group_change(...
@@ -305,6 +375,24 @@ x = 3000;
     x,... % permute_times 
     0,... % shorten
     'tot_older') % change_name
+
+%% 10 tot young reversed
+[group_change, test] = get_group_change(...
+    project_directory,... % project directory
+    analysed_directory,... % analysed directory
+    '_e_first',... % group1
+    '_e_last',... % group2
+    0,... % subtracted_name
+    participant_list_main_young,... % participant_list
+    1,...   % baseline_correct
+    1,... % start_time
+    151,... % end_time 
+    0,... % split
+    19,... % second_group_position
+    1,... % groups_to_compare
+    x,... % permute_times 
+    0,... % shorten
+    'tot_young_reversed') % change_name
 
 %% 10 tot older reversed
 [group_change, test] = get_group_change(...

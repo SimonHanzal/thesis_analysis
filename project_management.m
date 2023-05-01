@@ -1,3 +1,4 @@
+clear all
 cd('C:\Users\simonha\OneDrive - University of Glasgow\research\analysis\thesis_analysis')
 
 channel_locations = EEG.chanlocs.labels;
