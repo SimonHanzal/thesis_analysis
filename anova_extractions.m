@@ -1,5 +1,9 @@
+directory = 'C:\Users\simonha\OneDrive - University of Glasgow\research\analysis\thesis_analysis'
+analysed_directory = strcat(directory, '\clusters'); 
+cd(analysed_directory)
+
 %% Identify top electrodes
-load(strcat(test_name, '_test.mat'))
+load(strcat('nogo', '_test.mat'))
 
 extraction = squeeze(nanmean(squeeze(nanmean(test.stat,3)),2));
 top_2_electrodes = mink(extraction,2);
@@ -9,9 +13,26 @@ test.label(index_1)
 test.label(index_2)
 % For uncorrected
 %P5, P7
-
+%49 ,15
 % For Corrected
 %C3, FC6
+%5, 26
+% For nogo
+%Cz 18
+
+%% Trial type extractions
+load(strcat(test_name, '.mat'))
+test_name = 'nogo_young';
+test_name = 'nogo_older';
+
+interest1 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,18,25:55,151:166), 4)),2)),2);
+interest2 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,18,25:55,151:166), 4)),2)),2);
+
+test_name = 'go_young';
+test_name = 'go_older';
+
+interest1 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,18,25:55,101:116), 4)),2)),2);
+interest2 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,18,25:55,101:116), 4)),2)),2);
 
 %% Extract
 load(strcat(test_name, '.mat'))
@@ -37,9 +58,10 @@ test_name = 'between_demotivation_older_ms_all';
 
 
 % Values for drift
-interest1 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[15 49],7:19,:), 4)),2)),2);
-interest2 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[15 49],7:19,:), 4)),2)),2);
+interest1 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[49],7:19,:), 4)),2)),2);
+interest2 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[49],7:19,:), 4)),2)),2);
 
+load(strcat(test_name, '.mat'))
 %Beta main
 test_name = 'tot_reversed'
 test_name = 'tot_young_reversed_e_first';
@@ -62,8 +84,8 @@ test_name = 'between_demotivation_corrected_older_ms_all';
 
 
 % Values for task
-interest1 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[5 26],25:55,101:126), 4)),2)),2);
-interest2 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[5 26],25:55,101:126), 4)),2)),2);
+interest1 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[5],25:55,101:126), 4)),2)),2);
+interest2 = nanmean(squeeze(nanmean(squeeze(nanmean(group.powspctrm(:,[5],25:55,101:126), 4)),2)),2);
 
 
 

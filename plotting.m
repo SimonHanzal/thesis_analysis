@@ -25,9 +25,9 @@ ft_defaults;
 addpath(analysed_directory)
 cd(analysed_directory)
 
-test_name = 'within_demotivated_uncorrected_ms_all';
-test_name = 'tot_young_reversed';
-test_name = 'tot_older_reversed';
+test_name = 'age_differences';
+%test_name = 'tot_young_reversed';
+%test_name = 'tot_older_reversed';
 load(strcat(test_name, '.mat'))
 load(strcat(test_name, '_test.mat'))
 
@@ -49,7 +49,7 @@ freq_interp = linspace(5, 40, 512);
 channels = [1:30 33:64];
 plot_test = 1;
 baseline_correct = 0;
-mask_plot = 0;
+mask_plot = 1;
 
 cfg = [];
 cfg.channel = channels;
@@ -82,7 +82,7 @@ end
 cfg.colormap = cMap;
 %cfg.xlim = [-1.25, 1.25];
 cfg.ylim = [4, 40];%'maxmin';
-%cfg.zlim = [-2.5 2.5];% [0, 5] 'minzero'
+cfg.zlim = [-2.5 2.5];% [0, 5] 'minzero'
 cfg.title = ' ';
 cfg.layout = 'acticap-64ch-standard2.mat'
 cfg.figure = 'gcf';
@@ -103,6 +103,9 @@ hold on
 ft_singleplotTFR(cfg, plot_data);
 hold on
 xline(0);
+set(gcf, 'color', 'white');
+set(gcf,'position',[0,0,1200,1200])
+cd('C:\Users\simonha\OneDrive - University of Glasgow\research\slides\ohbm\plot_collection')
 
 % Extracting significant electrodes
 plot_data.sig_electrodes = squeeze(nanmean(squeeze(nanmean(double(test.posclusterslabelmat),3)),2)) > 0;
@@ -114,6 +117,8 @@ top_electrodes = squeeze(nanmean(squeeze(nanmean(test.stat(:, 25:55, 101:126),3)
 [a b] = min(top_electrodes);
 
 %% Topography
+test_name = 'tot_uncorrected_reversed';
+test_name = 'tot_uncorrected_older';
 test_name = 'tot_uncorrected_young_e_first';
 test_name = 'tot_uncorrected_young_e_last';
 test_name = 'tot_uncorrected_older_e_first';
@@ -122,11 +127,17 @@ test_name = 'betwee_motivation_young_ms_all';
 test_name = 'between_motivation_older_ms_all';
 test_name = 'tot';
 load(strcat(test_name, '.mat'))
+load(strcat(test_name, '_test.mat'))
 cfg = [];
 cfg.channel = channels;
 %cfg.avgoverrpt = 'yes';
 %cfg.parameter = {'powspctrm','powspctrm_b'};
 plot_data = ft_selectdata(cfg, group_change); %group, group_change
+plot_test == 1;
+if plot_test == 1
+    plot_data.powspctrm = test.stat;
+end
+
 
 cfg = [];
 cfg.layout = 'acticap-64ch-standard2.mat';
@@ -141,10 +152,10 @@ cfg = [];
 cfg.channel = {'EEG', '-EOG', '-ECG'};
 cfg.xlim = [-0.8 -0.3];        
 cfg.ylim = [8 12];
-cfg.zlim = [0 3];
+cfg.zlim = [0 1];
 cfg.title = '';
 cfg.colormap = cMap;
-cfg.colorbar = 'no';
+cfg.colorbar = 'yes';
 cfg.figure = 'gcf';
 %cfg.frequency = foi_contrast;
 %cfg.layout = 'acticap-64ch-standard2.mat';

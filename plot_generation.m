@@ -121,25 +121,43 @@ participant_list_demotivated_older = {'15001','15005','15007','15009',... %4
 %second_group_position, groups_to_compare, permute_times, shorten,  change_name)
 
 % Setting test strength
-x = 3000;
+x = 500;
+
+%%
+[group, group_change] = get_group(...
+    project_directory,...
+    analysed_directory,...
+    '_e_go_correct',...
+    0,...
+    participant_list_main_young,...
+    1,...
+    1,...
+    151,...
+    0,...
+    19,...
+    0,...
+    "go_young",...
+    0,...
+    0,...
+    "go_young_change")
 
 %% Tests
 [group_change, test] = get_group_change(...
     project_directory,... % project directory
     analysed_directory,... % analysed directory
     '_ms_all',... % group1
-    '_ms_all',... % group2
+    '_e_last',... % group2
     0,... % subtracted_name
-    participant_list_motivation,... % participant_list
-    0,...   % baseline_correct
-    21,... % start_time
-    75,... % end_time 
-    1,... % split
-    20,... % second_group_position
-    0,... % groups_to_compare
+    participant_list_motivated,... % participant_list
+    1,...   % baseline_correct
+    1,... % start_time
+    151,... % end_time 
+    0,... % split
+    19,... % second_group_position
+    1,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'within_motivation') % change_name
+    'between_motivation') % change_name
 
 
 %% TOT uncorrected
@@ -475,8 +493,8 @@ x = 3000;
 [group_change, test] = get_group_change(...
     project_directory,... % project directory
     analysed_directory,... % analysed directory
-    '_e_go',... % group1
-    '_e_go',... % group2
+    '_e_go_correct',... % group1
+    '_e_go_correct',... % group2
     0,... % subtracted_name
     participant_list_main,... % participant_list
     1,...   % baseline_correct
@@ -487,7 +505,7 @@ x = 3000;
     0,... % groups_to_compare
     x,... % permute_times 
     0,... % shorten
-    'go_test') % change_name
+    'go_correct_test') % change_name
 
 
 %% Within motivation splitting test
@@ -508,6 +526,24 @@ x = 3000;
     x,... % permute_times 
     0,... % shorten
     'within_motivation_test') % change_name
+
+%% Age differences
+[group_change, test] = get_group_change(...
+    project_directory,... % project directory
+    analysed_directory,... % analysed directory
+    '_e_last',... % group1
+    '_e_last',... % group2
+    '_e_first',... % subtracted_name
+    participant_list_main,... % participant_list
+    1,...   % baseline_correct
+    1,... % start_time
+    151,... % end_time 
+    1,... % split
+    19,... % second_group_position
+    0,... % groups_to_compare
+    x,... % permute_times 
+    0,... % shorten
+    'age_differences') % change_name
 
 %% Age differences
 [group_change, test] = get_group_change(...
